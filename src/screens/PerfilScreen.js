@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -21,7 +21,7 @@ export default function App() {
       }
     };
     carregarUsuario();
-  }, []);
+  }, [isLogin]);
 
   const escolherFoto = async () => {
     const resultado = await ImagePicker.launchImageLibraryAsync({
@@ -100,14 +100,18 @@ export default function App() {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {usuario && !isLogin ? (
         <View style={styles.perfil}>
+          <Text style={styles.titulo}>Meu Perfil</Text>
           {usuario.foto && <Image source={{ uri: usuario.foto }} style={styles.foto} />}
-          <View style={styles.infoBox}>
-            <Text style={styles.infoTexto}><Text style={styles.infoLabel}>Nome:</Text> {usuario.nome}</Text>
-            <Text style={styles.infoTexto}><Text style={styles.infoLabel}>RM:</Text> {usuario.rm}</Text>
-          </View>
+          <Text style={styles.infoTexto}>
+            <Text style={styles.infoLabel}>Nome:</Text> {usuario.nome}
+          </Text>
+          <Text style={styles.infoTexto}>
+            <Text style={styles.infoLabel}>RM:</Text> {usuario.rm}
+          </Text>
+
           <TouchableOpacity style={styles.botaoLogout} onPress={handleLogout}>
             <Text style={styles.botaoTexto}>Sair</Text>
           </TouchableOpacity>
@@ -169,93 +173,21 @@ export default function App() {
           </TouchableOpacity>
         </View>
       )}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f0f4f7',
-    justifyContent: 'center',
-    padding: 20,
-  },
-  titulo: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
-    color: '#333',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: 'white',
-    padding: 12,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  botao: {
-    backgroundColor: '#4CAF50',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-  },
-  botaoSecundario: {
-    backgroundColor: '#2196F3',
-    padding: 15,
-    borderRadius: 10,
-    marginVertical: 5,
-  },
-  botaoLogout: {
-    backgroundColor: '#e53935',
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  botaoTexto: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  foto: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    alignSelf: 'center',
-    marginVertical: 15,
-  },
-  bemVindo: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#333',
-    marginBottom: 15,
-  },
-  perfil: {
-    alignItems: 'center',
-  },
-  form: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 15,
-    elevation: 5,
-  },
-  infoBox: {
-    backgroundColor: '#ffffff',
-    padding: 15,
-    borderRadius: 10,
-    marginTop: 10,
-    elevation: 3,
-    width: '80%',
-  },
-  infoTexto: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#555',
-  },
-  infoLabel: {
-    fontWeight: 'bold',
-    color: '#333',
-  },
+  container: { flexGrow: 1, backgroundColor: '#f0f4f7', justifyContent: 'center', padding: 20 },
+  titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#333' },
+  input: { borderWidth: 1, borderColor: '#ccc', backgroundColor: 'white', padding: 12, borderRadius: 10, marginBottom: 15 },
+  botao: { backgroundColor: '#4CAF50', padding: 15, borderRadius: 10, marginVertical: 5 },
+  botaoSecundario: { backgroundColor: '#2196F3', padding: 15, borderRadius: 10, marginVertical: 5 },
+  botaoLogout: { backgroundColor: '#e53935', padding: 15, borderRadius: 10, marginTop: 20 },
+  botaoTexto: { color: 'white', fontWeight: 'bold', textAlign: 'center' },
+  foto: { width: 100, height: 100, borderRadius: 50, alignSelf: 'center', marginVertical: 10 },
+  perfil: { alignItems: 'center' },
+  form: { backgroundColor: 'white', padding: 20, borderRadius: 15, elevation: 5 },
+  infoTexto: { fontSize: 16, marginBottom: 5, color: '#555' },
+  infoLabel: { fontWeight: 'bold', color: '#333' },
 });
