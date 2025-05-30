@@ -1,6 +1,7 @@
+import { Picker } from '@react-native-picker/picker';
 import { useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, StyleSheet, TouchableOpacity, Alert, Modal } from 'react-native';
-import { getAbrigos, createAbrigo, deleteAbrigo } from '../services/abrigosService';
+import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { createAbrigo, deleteAbrigo, getAbrigos } from '../services/abrigosService';
 
 export default function AbrigosScreen() {
   const [abrigos, setAbrigos] = useState([]);
@@ -11,13 +12,15 @@ export default function AbrigosScreen() {
   const [novoStatus, setNovoStatus] = useState('ATIVO');
   const [modalVisible, setModalVisible] = useState(false);
 
+  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsekBnbWFpbC5jb20iLCJleHAiOjE3NDg3MzQ1ODl9.c7NxKzHEmztw-X0l0VV7u91jZXaP_mN_ebOXqMj0fVg'; // 👉 Coloque aqui o token obtido após o login
+
   useEffect(() => {
     carregarAbrigos();
   }, []);
 
   const carregarAbrigos = async () => {
     try {
-      const res = await getAbrigos();
+      const res = await getAbrigos(token);
       setAbrigos(res.data || []);
     } catch (error) {
       Alert.alert('Erro', 'Erro ao carregar abrigos');
@@ -39,7 +42,7 @@ export default function AbrigosScreen() {
     };
 
     try {
-      await createAbrigo(novoAbrigo);
+      await createAbrigo(novoAbrigo, token);
       setNovoNome('');
       setNovaLocalizacao('');
       setNovaCapacidadeTotal('');
@@ -54,7 +57,7 @@ export default function AbrigosScreen() {
 
   const excluirAbrigo = async (id) => {
     try {
-      await deleteAbrigo(id);
+      await deleteAbrigo(id, token);
       carregarAbrigos();
     } catch (error) {
       Alert.alert('Erro', 'Erro ao excluir abrigo');
@@ -119,6 +122,16 @@ export default function AbrigosScreen() {
               onChangeText={setNovaCapacidadeAtual}
             />
 
+            <Text style={styles.label}>Status:</Text>
+            <Picker
+              selectedValue={novoStatus}
+              onValueChange={(itemValue) => setNovoStatus(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="ATIVO" value="ATIVO" />
+              <Picker.Item label="INATIVO" value="INATIVO" />
+            </Picker>
+
             <TouchableOpacity style={styles.botaoAdicionar} onPress={adicionarAbrigo}>
               <Text style={styles.botaoTexto}>Salvar</Text>
             </TouchableOpacity>
@@ -149,4 +162,6 @@ const styles = StyleSheet.create({
   modalContent: { backgroundColor: 'white', padding: 20, borderRadius: 10 },
   modalTitulo: { fontSize: 20, fontWeight: 'bold', marginBottom: 15, textAlign: 'center' },
   input: { backgroundColor: '#fff', borderColor: '#ccc', borderWidth: 1, padding: 12, borderRadius: 10, marginBottom: 10 },
+  label: { fontSize: 16, fontWeight: '500', marginTop: 10, marginBottom: 5, color: '#333' },
+  picker: { backgroundColor: '#fff', borderColor: '#ccc', borderWidth: 1, borderRadius: 10, marginBottom: 10 }
 });

@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { Snowflake, ThermometerSnowflake, AlertTriangle } from 'lucide-react-native';
+import { AlertTriangle, Snowflake, ThermometerSnowflake } from 'lucide-react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function DashboardScreen() {
-  // Dados fake
   const dadosClima = {
     regiao: 'Centro-Oeste',
     temperatura: 6,

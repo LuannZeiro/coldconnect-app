@@ -2,81 +2,36 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
-export default function App() {
+export default function Perfil() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [token, setToken] = useState(null);
+  const [usuario, setUsuario] = useState(null);
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     const carregarToken = async () => {
-      const tokenSalvo = await AsyncStorage.getItem('token');
-      if (tokenSalvo) {
-        setToken(tokenSalvo);
-        setIsLogin(false);
+      try {
+        const tokenSalvo = await AsyncStorage.getItem('token');
+        if (tokenSalvo) {
+          setToken(tokenSalvo);
+          setUsuario({ email: 'Usuário Autenticado' }); // Pode ajustar conforme backend
+          setIsLogin(false);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar token:', error);
       }
     };
     carregarToken();
   }, []);
 
-  const handleRegister = async () => {
-    if (!email.trim() || !senha.trim()) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-
+  const salvarToken = async (novoToken) => {
     try {
-      const response = await fetch('http://localhost:8080/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
-      });
-
-      if (response.ok) {
-        Alert.alert('Sucesso', 'Usuário registrado!');
-        setIsLogin(true);
-        limparCampos();
-      } else {
-        const erro = await response.text();
-        Alert.alert('Erro', erro);
-      }
+      await AsyncStorage.setItem('token', novoToken);
+      setToken(novoToken);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível registrar.');
+      console.error('Erro ao salvar token:', error);
     }
-  };
-
-  const handleLogin = async () => {
-    if (!email.trim() || !senha.trim()) {
-      Alert.alert('Erro', 'Preencha email e senha.');
-      return;
-    }
-
-    try {
-      const response = await fetch('http://localhost:8080/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        await AsyncStorage.setItem('token', data.token);
-        setToken(data.token);
-        setIsLogin(false);
-        limparCampos();
-      } else {
-        const erro = await response.text();
-        Alert.alert('Erro', erro);
-      }
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível fazer login.');
-    }
-  };
-
-  const handleLogout = async () => {
-    await AsyncStorage.removeItem('token');
-    setToken(null);
-    setIsLogin(true);
   };
 
   const limparCampos = () => {
@@ -84,49 +39,93 @@ export default function App() {
     setSenha('');
   };
 
+  const registrarUsuario = async () => {
+    if (!email.trim() || !senha.trim()) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://10.0.2.2:8080/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (response.ok) {
+        Alert.alert('Sucesso', 'Usuário registrado!');
+        limparCampos();
+        setIsLogin(true);
+      } else {
+        const erro = await response.text();
+        Alert.alert('Erro', `Falha no registro: ${erro}`);
+      }
+    } catch (error) {
+      Alert.alert('Erro', `Erro na requisição: ${error.message}`);
+    }
+  };
+
+  const realizarLogin = async () => {
+    if (!email.trim() || !senha.trim()) {
+      Alert.alert('Erro', 'Preencha email e senha.');
+      return;
+    }
+
+    try {
+      const response = await fetch('http://10.0.2.2:8080/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, senha }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        await salvarToken(data.token);
+        setUsuario({ email });
+        setIsLogin(false);
+        limparCampos();
+        Alert.alert('Sucesso', 'Login realizado!');
+      } else {
+        const erro = await response.text();
+        Alert.alert('Erro', `Falha no login: ${erro}`);
+      }
+    } catch (error) {
+      Alert.alert('Erro', `Erro na requisição: ${error.message}`);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      setToken('');
+      setUsuario(null);
+      setIsLogin(true);
+      Alert.alert('Sucesso', 'Logout realizado!');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {token && !isLogin ? (
+      {usuario && !isLogin ? (
         <View style={styles.perfil}>
           <Text style={styles.titulo}>Bem-vindo!</Text>
-          <Text style={styles.infoTexto}>Token: {token.substring(0, 20)}...</Text>
+          <Text style={styles.infoTexto}>Email: {usuario.email}</Text>
           <TouchableOpacity style={styles.botaoLogout} onPress={handleLogout}>
             <Text style={styles.botaoTexto}>Sair</Text>
           </TouchableOpacity>
         </View>
-      ) : isLogin ? (
-        <View style={styles.form}>
-          <Text style={styles.titulo}>Login</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Senha"
-            secureTextEntry
-            value={senha}
-            onChangeText={setSenha}
-          />
-          <TouchableOpacity style={styles.botao} onPress={handleLogin}>
-            <Text style={styles.botaoTexto}>Entrar</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.botaoSecundario} onPress={() => setIsLogin(false)}>
-            <Text style={styles.botaoTexto}>Cadastrar</Text>
-          </TouchableOpacity>
-        </View>
       ) : (
         <View style={styles.form}>
-          <Text style={styles.titulo}>Cadastro</Text>
+          <Text style={styles.titulo}>{isLogin ? 'Login' : 'Cadastro'}</Text>
           <TextInput
             style={styles.input}
             placeholder="Email"
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
+            keyboardType="email-address"
           />
           <TextInput
             style={styles.input}
@@ -135,11 +134,11 @@ export default function App() {
             value={senha}
             onChangeText={setSenha}
           />
-          <TouchableOpacity style={styles.botao} onPress={handleRegister}>
-            <Text style={styles.botaoTexto}>Salvar</Text>
+          <TouchableOpacity style={styles.botao} onPress={isLogin ? realizarLogin : registrarUsuario}>
+            <Text style={styles.botaoTexto}>{isLogin ? 'Entrar' : 'Registrar'}</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.botaoSecundario} onPress={() => setIsLogin(true)}>
-            <Text style={styles.botaoTexto}>Voltar ao Login</Text>
+          <TouchableOpacity style={styles.botaoSecundario} onPress={() => setIsLogin(!isLogin)}>
+            <Text style={styles.botaoTexto}>{isLogin ? 'Cadastrar' : 'Voltar ao Login'}</Text>
           </TouchableOpacity>
         </View>
       )}
