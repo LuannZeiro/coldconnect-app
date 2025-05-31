@@ -15,7 +15,7 @@ export default function Perfil() {
         const tokenSalvo = await AsyncStorage.getItem('token');
         if (tokenSalvo) {
           setToken(tokenSalvo);
-          setUsuario({ email: 'Usuário Autenticado' }); // Pode ajustar conforme backend
+          setUsuario({ email: 'Usuário Autenticado' });
           setIsLogin(false);
         }
       } catch (error) {
@@ -46,7 +46,7 @@ export default function Perfil() {
     }
 
     try {
-      const response = await fetch('http://10.0.2.2:8080/auth/register', {
+      const response = await fetch('http://10.0.2.2:8080/auth/register', { // ip do emulador android studio
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),
