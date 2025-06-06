@@ -1,28 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import LuannFoto from '../components/img/LuannFoto.jpg';
 import HenzoFoto from '../components/img/HenzoFoto.jpg';
 
+const imagensLocais = {
+  'Luann Mariano': LuannFoto,
+  'Henzo Puchetti': HenzoFoto,
+};
 
 export default function Voluntarios() {
   const [usuariosCadastrados, setUsuariosCadastrados] = useState([]);
 
   const voluntariosFakes = [
     {
-    nome: 'Luann Mariano',
-    rm: '558548',
-    foto: LuannFoto,
-  },
-  {
-    nome: 'Henzo Puchetti',
-    rm: '555179',
-    foto: HenzoFoto,
-  },
+      nome: 'Luann Mariano',
+      rm: '558548',
+      foto: 'local',
+    },
+    {
+      nome: 'Henzo Puchetti',
+      rm: '555179',
+      foto: 'local',
+    },
     {
       nome: 'Fernanda Souza',
       rm: '345678',
-      foto: 'https://randomuser.me/api/portraits/women/4.jpg',
+      foto: 'https://randomuser.me/api/portraits/women/3.jpg',
     },
     {
       nome: 'Lucas Oliveira',
@@ -33,17 +38,22 @@ export default function Voluntarios() {
 
   useEffect(() => {
     const carregarUsuarios = async () => {
-      const dados = await AsyncStorage.getItem('usuarios');
-      if (dados) {
-        setUsuariosCadastrados(JSON.parse(dados));
-      } else {
-        await AsyncStorage.setItem('usuarios', JSON.stringify(voluntariosFakes));
-        setUsuariosCadastrados(voluntariosFakes);
-      }
+      // Descomente para limpar dados antigos:
+      await AsyncStorage.removeItem('usuarios');
+
+      await AsyncStorage.setItem('usuarios', JSON.stringify(voluntariosFakes));
+      setUsuariosCadastrados(voluntariosFakes);
     };
 
     carregarUsuarios();
   }, []);
+
+  const obterImagem = (nome, foto) => {
+    if (foto === 'local' && imagensLocais[nome]) {
+      return imagensLocais[nome];
+    }
+    return { uri: foto };
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -52,7 +62,7 @@ export default function Voluntarios() {
         {usuariosCadastrados.length > 0 ? (
           usuariosCadastrados.map((u, index) => (
             <View key={index} style={styles.infoBox}>
-              {u.foto && <Image source={{ uri: u.foto }} style={styles.foto} />}
+              <Image source={obterImagem(u.nome, u.foto)} style={styles.foto} />
               <Text style={styles.infoTexto}>
                 <Text style={styles.infoLabel}>Nome:</Text> {u.nome}
               </Text>
