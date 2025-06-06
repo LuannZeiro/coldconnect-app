@@ -1,38 +1,20 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
+} from 'react-native';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function Perfil() {
+  const { token, login, logout } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [usuario, setUsuario] = useState(null);
-  const [token, setToken] = useState('');
-
-  useEffect(() => {
-    const carregarToken = async () => {
-      try {
-        const tokenSalvo = await AsyncStorage.getItem('token');
-        if (tokenSalvo) {
-          setToken(tokenSalvo);
-          setUsuario({ email: 'Usuário Autenticado' });
-          setIsLogin(false);
-        }
-      } catch (error) {
-        console.error('Erro ao carregar token:', error);
-      }
-    };
-    carregarToken();
-  }, []);
-
-  const salvarToken = async (novoToken) => {
-    try {
-      await AsyncStorage.setItem('token', novoToken);
-      setToken(novoToken);
-    } catch (error) {
-      console.error('Erro ao salvar token:', error);
-    }
-  };
 
   const limparCampos = () => {
     setEmail('');
@@ -46,7 +28,7 @@ export default function Perfil() {
     }
 
     try {
-      const response = await fetch('http://10.0.2.2:8080/auth/register', { // ip do emulador android studio
+      const response = await fetch('http://10.0.2.2:8080/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, senha }),
@@ -80,9 +62,7 @@ export default function Perfil() {
 
       if (response.ok) {
         const data = await response.json();
-        await salvarToken(data.token);
-        setUsuario({ email });
-        setIsLogin(false);
+        await login(data.token);
         limparCampos();
         Alert.alert('Sucesso', 'Login realizado!');
       } else {
@@ -95,23 +75,16 @@ export default function Perfil() {
   };
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-      setToken('');
-      setUsuario(null);
-      setIsLogin(true);
-      Alert.alert('Sucesso', 'Logout realizado!');
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
+    await logout();
+    Alert.alert('Sucesso', 'Logout realizado!');
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {usuario && !isLogin ? (
+      {token ? (
         <View style={styles.perfil}>
           <Text style={styles.titulo}>Bem-vindo!</Text>
-          <Text style={styles.infoTexto}>Email: {usuario.email}</Text>
+          <Text style={styles.infoTexto}>Você está logado.</Text>
           <TouchableOpacity style={styles.botaoLogout} onPress={handleLogout}>
             <Text style={styles.botaoTexto}>Sair</Text>
           </TouchableOpacity>

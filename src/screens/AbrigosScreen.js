@@ -2,6 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import { useEffect, useState } from 'react';
 import { Alert, FlatList, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { createAbrigo, deleteAbrigo, getAbrigos } from '../services/abrigosService';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AbrigosScreen() {
   const [abrigos, setAbrigos] = useState([]);
@@ -12,11 +13,13 @@ export default function AbrigosScreen() {
   const [novoStatus, setNovoStatus] = useState('ATIVO');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsekBnbWFpbC5jb20iLCJleHAiOjE3NDg3MzQ1ODl9.c7NxKzHEmztw-X0l0VV7u91jZXaP_mN_ebOXqMj0fVg';
+  const { token } = useAuth();
 
   useEffect(() => {
-    carregarAbrigos();
-  }, []);
+    if (token) {
+      carregarAbrigos();
+    }
+  }, [token]);
 
   const carregarAbrigos = async () => {
     try {
@@ -51,7 +54,7 @@ export default function AbrigosScreen() {
       setModalVisible(false);
       carregarAbrigos();
     } catch (error) {
-      Alert.alert('Erro', 'Erro ao adicionar abrigo');
+      Alert.alert('Erro', 'Erro ao adicionar abrigo, esteja logado para adicionar um novo abrigo');
     }
   };
 
