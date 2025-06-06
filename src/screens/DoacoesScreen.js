@@ -128,8 +128,18 @@ export default function DoacoesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f0f4f7', padding: 20 },
-  titulo: { fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#333' },
+  container: { 
+    flex: 1, 
+    backgroundColor: '#f0f4f7', 
+    padding: 20 
+  },
+  titulo: { 
+    fontSize: 24, 
+    fontWeight: 'bold', 
+    marginBottom: 10, 
+    textAlign: 'center', 
+    color: '#333' 
+  },
   bemVindo: { fontSize: 16, marginBottom: 10, color: '#555', textAlign: 'center' },
   item: { padding: 10, backgroundColor: '#fff', marginVertical: 5, borderRadius: 8, elevation: 2 },
   input: { backgroundColor: '#fff', borderColor: '#ccc', borderWidth: 1, padding: 12, borderRadius: 10, marginTop: 10 },
