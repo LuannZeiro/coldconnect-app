@@ -1,21 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LuannFoto from '../components/img/LuannFoto.jpg';
+import HenzoFoto from '../components/img/HenzoFoto.jpg';
+
 
 export default function Voluntarios() {
   const [usuariosCadastrados, setUsuariosCadastrados] = useState([]);
 
   const voluntariosFakes = [
     {
-      nome: 'Ana Beatriz',
-      rm: '123456',
-      foto: 'https://randomuser.me/api/portraits/women/1.jpg',
-    },
-    {
-      nome: 'Carlos Henrique',
-      rm: '234567',
-      foto: 'https://randomuser.me/api/portraits/men/2.jpg',
-    },
+    nome: 'Luann Mariano',
+    rm: '558548',
+    foto: LuannFoto,
+  },
+  {
+    nome: 'Henzo Puchetti',
+    rm: '555179',
+    foto: HenzoFoto,
+  },
     {
       nome: 'Fernanda Souza',
       rm: '345678',
