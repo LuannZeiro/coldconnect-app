@@ -11,7 +11,7 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Perfil() {
-  const { token, login, logout } = useAuth();
+  const { token, userEmail, login, logout } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
@@ -62,7 +62,7 @@ export default function Perfil() {
 
       if (response.ok) {
         const data = await response.json();
-        await login(data.token);
+        await login(data.token, email); // Passa o token e o email
         limparCampos();
         Alert.alert('Sucesso', 'Login realizado!');
       } else {
@@ -84,7 +84,8 @@ export default function Perfil() {
       {token ? (
         <View style={styles.perfil}>
           <Text style={styles.titulo}>Bem-vindo!</Text>
-          <Text style={styles.infoTexto}>Você está logado.</Text>
+          <Text style={styles.infoTexto}>Você está logado como:</Text>
+          <Text style={styles.infoTexto}>{userEmail}</Text>
           <TouchableOpacity style={styles.botaoLogout} onPress={handleLogout}>
             <Text style={styles.botaoTexto}>Sair</Text>
           </TouchableOpacity>
