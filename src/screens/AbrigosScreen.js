@@ -12,7 +12,7 @@ export default function AbrigosScreen() {
   const [novoStatus, setNovoStatus] = useState('ATIVO');
   const [modalVisible, setModalVisible] = useState(false);
 
-  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsekBnbWFpbC5jb20iLCJleHAiOjE3NDg3MzQ1ODl9.c7NxKzHEmztw-X0l0VV7u91jZXaP_mN_ebOXqMj0fVg'; // 👉 Coloque aqui o token obtido após o login
+  const token = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsekBnbWFpbC5jb20iLCJleHAiOjE3NDg3MzQ1ODl9.c7NxKzHEmztw-X0l0VV7u91jZXaP_mN_ebOXqMj0fVg';
 
   useEffect(() => {
     carregarAbrigos();
