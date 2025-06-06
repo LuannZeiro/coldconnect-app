@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     gap: 20,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#e3f2fd',
     flexGrow: 1,
   },
   titulo: {

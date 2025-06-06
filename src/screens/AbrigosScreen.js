@@ -150,7 +150,7 @@ export default function AbrigosScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f0f4f7', padding: 20 },
+  container: { flex: 1, backgroundColor: '#e3f2fd', padding: 20 },
   titulo: { fontSize: 26, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#333' },
   botaoAdicionar: { backgroundColor: '#4CAF50', padding: 12, borderRadius: 10, marginBottom: 20 },
   botaoExcluir: { backgroundColor: '#e53935', padding: 10, borderRadius: 8, marginTop: 10 },

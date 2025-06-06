@@ -6,7 +6,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
+  View,
+  Image,
 } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -62,7 +63,7 @@ export default function Perfil() {
 
       if (response.ok) {
         const data = await response.json();
-        await login(data.token, email); // Passa o token e o email
+        await login(data.token, email);
         limparCampos();
         Alert.alert('Sucesso', 'Login realizado!');
       } else {
@@ -82,9 +83,12 @@ export default function Perfil() {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {token ? (
-        <View style={styles.perfil}>
-          <Text style={styles.titulo}>Bem-vindo!</Text>
-          <Text style={styles.infoTexto}>Você está logado como:</Text>
+        <View style={styles.perfilCard}>
+          <Image
+            source={{ uri: 'https://i.pravatar.cc/150?img=8' }}
+            style={styles.avatar}
+          />
+          <Text style={styles.boasVindas}>Olá!</Text>
           <Text style={styles.infoTexto}>{userEmail}</Text>
           <TouchableOpacity style={styles.botaoLogout} onPress={handleLogout}>
             <Text style={styles.botaoTexto}>Sair</Text>
@@ -121,14 +125,81 @@ export default function Perfil() {
 }
 
 const styles = StyleSheet.create({
-  container: { flexGrow: 1, backgroundColor: '#f0f4f7', justifyContent: 'center', padding: 20 },
-  titulo: { fontSize: 28, fontWeight: 'bold', marginBottom: 20, textAlign: 'center', color: '#333' },
-  input: { borderWidth: 1, borderColor: '#ccc', backgroundColor: 'white', padding: 12, borderRadius: 10, marginBottom: 15 },
-  botao: { backgroundColor: '#4CAF50', padding: 15, borderRadius: 10, marginVertical: 5 },
-  botaoSecundario: { backgroundColor: '#2196F3', padding: 15, borderRadius: 10, marginVertical: 5 },
-  botaoLogout: { backgroundColor: '#e53935', padding: 15, borderRadius: 10, marginTop: 20 },
-  botaoTexto: { color: 'white', fontWeight: 'bold', textAlign: 'center' },
-  perfil: { alignItems: 'center' },
-  form: { backgroundColor: 'white', padding: 20, borderRadius: 15, elevation: 5 },
-  infoTexto: { fontSize: 16, marginBottom: 5, color: '#555' },
+  container: {
+    flexGrow: 1,
+    backgroundColor: '#e3f2fd',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#1976d2',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    backgroundColor: 'white',
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 15,
+  },
+  botao: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  botaoSecundario: {
+    backgroundColor: '#2196F3',
+    padding: 15,
+    borderRadius: 10,
+    marginVertical: 5,
+  },
+  botaoLogout: {
+    backgroundColor: '#e53935',
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 25,
+    width: '100%',
+  },
+  botaoTexto: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  form: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 15,
+    elevation: 5,
+  },
+  perfilCard: {
+    backgroundColor: 'white',
+    padding: 30,
+    borderRadius: 15,
+    elevation: 6,
+    alignItems: 'center',
+  },
+  boasVindas: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    marginTop: 10,
+    color: '#1976d2',
+  },
+  infoTexto: {
+    fontSize: 18,
+    marginTop: 5,
+    color: '#555',
+    marginBottom: 20,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 60,
+    borderWidth: 2,
+    borderColor: '#2196F3',
+  },
 });

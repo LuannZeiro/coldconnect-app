@@ -5,11 +5,37 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Voluntarios() {
   const [usuariosCadastrados, setUsuariosCadastrados] = useState([]);
 
+  const voluntariosFakes = [
+    {
+      nome: 'Ana Beatriz',
+      rm: '123456',
+      foto: 'https://randomuser.me/api/portraits/women/1.jpg',
+    },
+    {
+      nome: 'Carlos Henrique',
+      rm: '234567',
+      foto: 'https://randomuser.me/api/portraits/men/2.jpg',
+    },
+    {
+      nome: 'Fernanda Souza',
+      rm: '345678',
+      foto: 'https://randomuser.me/api/portraits/women/3.jpg',
+    },
+    {
+      nome: 'Lucas Oliveira',
+      rm: '456789',
+      foto: 'https://randomuser.me/api/portraits/men/4.jpg',
+    },
+  ];
+
   useEffect(() => {
     const carregarUsuarios = async () => {
       const dados = await AsyncStorage.getItem('usuarios');
       if (dados) {
         setUsuariosCadastrados(JSON.parse(dados));
+      } else {
+        await AsyncStorage.setItem('usuarios', JSON.stringify(voluntariosFakes));
+        setUsuariosCadastrados(voluntariosFakes);
       }
     };
 
@@ -43,7 +69,7 @@ export default function Voluntarios() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#f0f4f7',
+    backgroundColor: '#e3f2fd',
     padding: 20,
     alignItems: 'center',
   },
