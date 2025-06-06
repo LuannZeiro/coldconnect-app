@@ -22,7 +22,7 @@ export default function Voluntarios() {
     {
       nome: 'Fernanda Souza',
       rm: '345678',
-      foto: 'https://randomuser.me/api/portraits/women/3.jpg',
+      foto: 'https://randomuser.me/api/portraits/women/4.jpg',
     },
     {
       nome: 'Lucas Oliveira',
