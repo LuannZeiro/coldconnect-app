@@ -15,10 +15,10 @@ export default function DoacoesScreen() {
   const [tipoRecurso, setTipoRecurso] = useState('');
   const [quantidade, setQuantidade] = useState('');
   const [abrigoId, setAbrigoId] = useState('');
-  const [alertaId, setAlertaId] = useState('');
   const [solicitacoes, setSolicitacoes] = useState([]);
 
   const { token } = useAuth();
+  const alertaId = 1; // fixo e não editável
 
   const carregarSolicitacoes = async () => {
     try {
@@ -42,7 +42,7 @@ export default function DoacoesScreen() {
   }, []);
 
   const enviarSolicitacao = async () => {
-    if (!tipoRecurso || !quantidade || !abrigoId || !alertaId) {
+    if (!tipoRecurso || !quantidade || !abrigoId) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
@@ -58,7 +58,7 @@ export default function DoacoesScreen() {
           tipoRecurso,
           quantidade: parseInt(quantidade),
           abrigoId: parseInt(abrigoId),
-          alertaId: parseInt(alertaId),
+          alertaId, // envia fixo
         }),
       });
 
@@ -67,7 +67,6 @@ export default function DoacoesScreen() {
         setTipoRecurso('');
         setQuantidade('');
         setAbrigoId('');
-        setAlertaId('');
         carregarSolicitacoes();
       } else {
         const erro = await resposta.json();
@@ -103,13 +102,6 @@ export default function DoacoesScreen() {
           keyboardType="numeric"
           value={abrigoId}
           onChangeText={setAbrigoId}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="ID do Alerta"
-          keyboardType="numeric"
-          value={alertaId}
-          onChangeText={setAlertaId}
         />
 
         <TouchableOpacity style={styles.botao} onPress={enviarSolicitacao}>
