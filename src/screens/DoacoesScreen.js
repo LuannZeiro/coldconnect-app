@@ -9,24 +9,23 @@ export default function DoacoesScreen() {
   const [alertaId, setAlertaId] = useState('');
   const [solicitacoes, setSolicitacoes] = useState([]);
   const [usuario, setUsuario] = useState(null);
+  const [token, setToken] = useState('');
 
   useEffect(() => {
-    const carregarUsuario = async () => {
-      const dadosUsuario = await AsyncStorage.getItem('usuarioLogado');
-      if (dadosUsuario) {
-        const usuarioObj = JSON.parse(dadosUsuario);
-        setUsuario(usuarioObj);
+    const carregarUsuarioEToken = async () => {
+      try {
+        const dadosUsuario = await AsyncStorage.getItem('usuarioLogado');
+        const tokenSalvo = await AsyncStorage.getItem('token');
+        if (dadosUsuario) setUsuario(JSON.parse(dadosUsuario));
+        if (tokenSalvo) setToken(tokenSalvo);
+      } catch (e) {
+        console.error('Erro ao carregar usuário ou token:', e);
       }
     };
-    carregarUsuario();
+    carregarUsuarioEToken();
   }, []);
 
   const enviarSolicitacao = async () => {
-    if (!usuario) {
-      Alert.alert('Atenção', 'Você precisa estar logado para enviar uma solicitação.');
-      return;
-    }
-
     if (!tipoRecurso || !quantidade || !abrigoId || !alertaId) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
@@ -42,7 +41,10 @@ export default function DoacoesScreen() {
     try {
       const response = await fetch('http://10.0.2.2:8080/solicitacoes', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token && { Authorization: `Bearer ${token}` })
+        },
         body: JSON.stringify(novaSolicitacao)
       });
 
@@ -50,7 +52,6 @@ export default function DoacoesScreen() {
         Alert.alert('Sucesso', 'Solicitação enviada com sucesso!');
         setSolicitacoes([...solicitacoes, novaSolicitacao]);
 
-        // Limpa os campos
         setTipoRecurso('');
         setQuantidade('');
         setAbrigoId('');
@@ -68,9 +69,9 @@ export default function DoacoesScreen() {
     <View style={styles.container}>
       <Text style={styles.titulo}>Solicitar Recursos</Text>
 
-      {usuario && (
-        <Text style={styles.bemVindo}>Bem-vindo, {usuario.nome}!</Text>
-      )}
+      <Text style={styles.bemVindo}>
+        {usuario ? `Bem-vindo, ${usuario.nome}!` : 'Você está enviando como visitante.'}
+      </Text>
 
       <TextInput
         style={styles.input}
@@ -103,11 +104,7 @@ export default function DoacoesScreen() {
         keyboardType="numeric"
       />
 
-      <TouchableOpacity
-        style={[styles.botao, !usuario && styles.botaoDesativado]}
-        onPress={enviarSolicitacao}
-        disabled={!usuario}
-      >
+      <TouchableOpacity style={styles.botao} onPress={enviarSolicitacao}>
         <Text style={styles.textoBotao}>Enviar Solicitação</Text>
       </TouchableOpacity>
 
@@ -128,23 +125,12 @@ export default function DoacoesScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#e3f2fd', 
-    padding: 20 
-  },
-  titulo: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    marginBottom: 10, 
-    textAlign: 'center', 
-    color: '#333' 
-  },
+  container: { flex: 1, backgroundColor: '#e3f2fd', padding: 20 },
+  titulo: { fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center', color: '#333' },
   bemVindo: { fontSize: 16, marginBottom: 10, color: '#555', textAlign: 'center' },
   item: { padding: 10, backgroundColor: '#fff', marginVertical: 5, borderRadius: 8, elevation: 2 },
   input: { backgroundColor: '#fff', borderColor: '#ccc', borderWidth: 1, padding: 12, borderRadius: 10, marginTop: 10 },
   botao: { backgroundColor: '#4CAF50', padding: 12, borderRadius: 10, alignItems: 'center', marginTop: 20 },
-  botaoDesativado: { backgroundColor: '#aaa' },
   textoBotao: { color: 'white', fontWeight: 'bold' },
   semDados: { textAlign: 'center', marginTop: 20, color: '#999', fontStyle: 'italic' },
 });

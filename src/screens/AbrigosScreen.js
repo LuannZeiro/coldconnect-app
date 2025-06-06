@@ -41,18 +41,26 @@ export default function AbrigosScreen() {
       localizacao: novaLocalizacao,
       capacidadeTotal: parseInt(novaCapacidadeTotal),
       capacidadeAtual: parseInt(novaCapacidadeAtual),
-      status: novoStatus
+      status: novoStatus,
     };
 
     try {
-      await createAbrigo(novoAbrigo, token);
+      // Cria abrigo e aguarda resposta com o objeto criado, que contém o id
+      const res = await createAbrigo(novoAbrigo, token);
+
+      // Supondo que a API retorne o abrigo criado em res.data
+      const abrigoCriado = res.data;
+
+      // Atualiza a lista local adicionando o abrigo criado
+      setAbrigos(prev => [...prev, abrigoCriado]);
+
+      // Limpa inputs e fecha modal
       setNovoNome('');
       setNovaLocalizacao('');
       setNovaCapacidadeTotal('');
       setNovaCapacidadeAtual('');
       setNovoStatus('ATIVO');
       setModalVisible(false);
-      carregarAbrigos();
     } catch (error) {
       Alert.alert('Erro', 'Erro ao adicionar abrigo, esteja logado para adicionar um novo abrigo');
     }
@@ -61,7 +69,9 @@ export default function AbrigosScreen() {
   const excluirAbrigo = async (id) => {
     try {
       await deleteAbrigo(id, token);
-      carregarAbrigos();
+
+      // Atualiza lista local removendo o abrigo excluído
+      setAbrigos(prev => prev.filter(a => a.id !== id));
     } catch (error) {
       Alert.alert('Erro', 'Erro ao excluir abrigo');
     }
@@ -80,7 +90,7 @@ export default function AbrigosScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.card}>
-            <Text style={styles.nomeAbrigo}>{item.nome}</Text>
+            <Text style={styles.nomeAbrigo}>ID {item.id} - {item.nome}</Text>
             <Text style={styles.localizacao}>📍 {item.localizacao}</Text>
             <Text style={styles.info}>Capacidade Total: {item.capacidadeTotal}</Text>
             <Text style={styles.info}>Capacidade Atual: {item.capacidadeAtual}</Text>
