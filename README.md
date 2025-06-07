@@ -2,6 +2,8 @@
 
 ## Integrantes: Henzo Puchetti - RM555179 / Luann Mariano - RM558548
 
+## Youtube: https://youtu.be/8Mpr0R16Siw
+
 ## Visão Geral
 
 ColdConnect é um aplicativo móvel desenvolvido para auxiliar comunidades em regiões de temperaturas extremamente baixas. O app conecta usuários, sensores IoT, pontos de abrigo e serviços de assistência social, facilitando a troca de informações, alertas e ajuda em situações de frio extremo.
