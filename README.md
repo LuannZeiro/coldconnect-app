@@ -1,7 +1,5 @@
 # ColdConnect - Rede Comunitária para Temperaturas Extremamente Baixas
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-
 # Integrantes: Henzo Puchetti - RM555179 / Luann Mariano - RM558548
 
 ## Visão Geral
